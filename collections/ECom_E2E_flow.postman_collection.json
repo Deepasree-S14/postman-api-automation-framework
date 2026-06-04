@@ -1,0 +1,894 @@
+{
+  "info": {
+    "_postman_id": "42b742f1-45e1-483a-b20d-20d06d0dbf58",
+    "name": "ECom E2E flow",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "54224196",
+    "_collection_link": "https://go.postman.co/collection/54224196-42b742f1-45e1-483a-b20d-20d06d0dbf58?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Positive Scenarios",
+      "item": [
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();",
+                  "pm.test(\"Validate login message\", function () ",
+                  "{",
+                  "    pm.expect(response.message).to.eql(\"Login Successfully\");  ",
+                  "    });",
+                  "    pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.expect(response.token).to.not.be.null;",
+                  "pm.expect(response.userId).to.not.be.null;",
+                  "pm.environment.set(\"token\", response.token);",
+                  "pm.environment.set(\"userId\", response.userId);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"userEmail\": \"QATester@gmail.com\", \"userPassword\": \"Tester#123\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{Base_Url}}/api/ecom/auth/login",
+              "host": [
+                "{{Base_Url}}"
+              ],
+              "path": [
+                "api",
+                "ecom",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Products",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Get All Products\",function()\r",
+                  "{\r",
+                  "    pm.expect(pm.response.json().data.length).to.be.greaterThan(0);\r",
+                  "    pm.expect(pm.response.json().message).to.eql(\"All Products fetched Successfully\");\r",
+                  "    \r",
+                  "})\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {
+              "content-length": true
+            }
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{Base_Url}}/api/ecom/product/get-all-products",
+              "host": [
+                "{{Base_Url}}"
+              ],
+              "path": [
+                "api",
+                "ecom",
+                "product",
+                "get-all-products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Product",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();\r",
+                  "pm.test(\"Create Product\",function(){\r",
+                  "    pm.expect(response.message).to.eql(\"Product Added Successfully\");\r",
+                  "    pm.expect(response.productId).to.not.be.null;   \r",
+                  "})\r",
+                  "pm.test(\"Status code is 201\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "\r",
+                  "  pm.collectionVariables.set(\"productId\", response.productId);\r",
+                  "\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.collectionVariables.set(\"productName\",pm.iterationData.get(\"productName\"));\r",
+                  "pm.collectionVariables.set(\"productSubCategory\",pm.iterationData.get(\"productSubCategory\"));\r",
+                  "pm.collectionVariables.set(\"productPrice\",pm.iterationData.get(\"productPrice\"));\r",
+                  "pm.collectionVariables.set(\"productFor\",pm.iterationData.get(\"productFor\"));"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "productName",
+                  "value": "{{productName}}",
+                  "type": "text"
+                },
+                {
+                  "key": "productCategory",
+                  "value": "fashion",
+                  "type": "text"
+                },
+                {
+                  "key": "productSubCategory",
+                  "value": "{{productSubCategory}}",
+                  "type": "text"
+                },
+                {
+                  "key": "productPrice",
+                  "value": "{{productPrice}}",
+                  "type": "text"
+                },
+                {
+                  "key": "productDescription",
+                  "value": "Addias Originals",
+                  "type": "text"
+                },
+                {
+                  "key": "productFor",
+                  "value": "{{productFor}}",
+                  "type": "text",
+                  "uuid": "7c2afe29-e945-4869-b0e7-c0f6d7a2880e"
+                },
+                {
+                  "key": "productAddedBy",
+                  "value": "{{userId}}",
+                  "type": "text",
+                  "uuid": "fd6047ac-db49-40ec-b49e-aaa9d9d5447d"
+                },
+                {
+                  "key": "productImage",
+                  "type": "file",
+                  "uuid": "e7778756-8143-4fa0-a80e-858714e001c9",
+                  "value": null
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{Base_Url}}/api/ecom/product/add-product",
+              "host": [
+                "{{Base_Url}}"
+              ],
+              "path": [
+                "api",
+                "ecom",
+                "product",
+                "add-product"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Order",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "const response = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Check if the order was placed successfully\", function () {\r",
+                  "\r",
+                  " pm.expect(response.message).to.eql(\"Order Placed Successfully\");\r",
+                  "\r",
+                  "});\r",
+                  "pm.test(\"Status code is 201\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  " pm.collectionVariables.set(\"orderId\",response.orders[0]);\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"orders\": [\r\n        {\r\n            \"country\": \"India\",\r\n            \"productOrderedId\": \"{{productId}}\"\r\n            \r\n        }\r\n    ]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{Base_Url}}/api/ecom/order/create-order",
+              "host": [
+                "{{Base_Url}}"
+              ],
+              "path": [
+                "api",
+                "ecom",
+                "order",
+                "create-order"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "View Order Details",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();\r",
+                  "const schema = {\r",
+                  "  \"type\": \"object\",\r",
+                  "  \"properties\": {\r",
+                  "    \"data\": {\r",
+                  "      \"type\": \"object\",\r",
+                  "      \"properties\": {\r",
+                  "        \"_id\": {\r",
+                  "          \"type\": \"string\"\r",
+                  "        },\r",
+                  "        \"orderById\": {\r",
+                  "          \"type\": \"string\"\r",
+                  "        },\r",
+                  "        \"orderBy\": {\r",
+                  "          \"type\": \"string\"\r",
+                  "        },\r",
+                  "        \"productOrderedId\": {\r",
+                  "          \"type\": \"string\"\r",
+                  "        },\r",
+                  "        \"productName\": {\r",
+                  "          \"type\": \"string\"\r",
+                  "        },\r",
+                  "        \"country\": {\r",
+                  "          \"type\": \"string\"\r",
+                  "        },\r",
+                  "        \"productDescription\": {\r",
+                  "          \"type\": \"string\"\r",
+                  "        },\r",
+                  "        \"productImage\": {\r",
+                  "          \"type\": \"string\"\r",
+                  "        },\r",
+                  "        \"orderPrice\": {\r",
+                  "          \"type\": \"string\"\r",
+                  "        },\r",
+                  "        \"__v\": {\r",
+                  "          \"type\": \"number\"\r",
+                  "        }\r",
+                  "      },\r",
+                  "      \"required\": [\r",
+                  "        \"_id\",\r",
+                  "        \"orderById\",\r",
+                  "        \"orderBy\",\r",
+                  "        \"productOrderedId\",\r",
+                  "        \"productName\",\r",
+                  "        \"country\",\r",
+                  "        \"productDescription\",\r",
+                  "        \"productImage\",\r",
+                  "        \"orderPrice\",\r",
+                  "        \"__v\"\r",
+                  "      ]\r",
+                  "    },\r",
+                  "    \"message\": {\r",
+                  "      \"type\": \"string\"\r",
+                  "    }\r",
+                  "  },\r",
+                  "  \"required\": [\r",
+                  "    \"data\",\r",
+                  "    \"message\"\r",
+                  "  ]\r",
+                  "}\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "pm.test(\"View ordered product\",function()\r",
+                  "{\r",
+                  "    pm.expect(response.message).to.be.eql(\"Orders fetched for customer Successfully\")\r",
+                  "});\r",
+                  "//Validate product Name\r",
+                  "pm.test(\"Validate product Name\",function()\r",
+                  "{\r",
+                  "    pm.expect(response.data.productName).to.eql(pm.collectionVariables.get(\"productName\"));\r",
+                  "});\r",
+                  "//Validate response schema\r",
+                  "pm.test(\"Validate json response schema\", function() {\r",
+                  "    pm.response.to.have.jsonSchema(schema);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{Base_Url}}/api/ecom/order/get-orders-details?id={{orderId}}",
+              "host": [
+                "{{Base_Url}}"
+              ],
+              "path": [
+                "api",
+                "ecom",
+                "order",
+                "get-orders-details"
+              ],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "{{orderId}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Order",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Validate Delete Order\", function()\r",
+                  "{\r",
+                  "    pm.expect(pm.response.json().message).to.eql(\"Orders Deleted Successfully\");\r",
+                  "})\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{Base_Url}}/api/ecom/order/delete-order/{{orderId}}",
+              "host": [
+                "{{Base_Url}}"
+              ],
+              "path": [
+                "api",
+                "ecom",
+                "order",
+                "delete-order",
+                "{{orderId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Product",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Product Deleted Successfully\", function () {\r",
+                  "    pm.expect(pm.response.json().message).to.eql(\"Product Deleted Successfully\");\r",
+                  "    });\r",
+                  "    pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{Base_Url}}/api/ecom/product/delete-product/{{productId}}",
+              "host": [
+                "{{Base_Url}}"
+              ],
+              "path": [
+                "api",
+                "ecom",
+                "product",
+                "delete-product",
+                "{{productId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              ""
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              ""
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Negative Scenarios",
+      "item": [
+        {
+          "name": "Invalid Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();\r",
+                  "pm.test(\"Status code is 400\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "    pm.expect(response.message).to.eql(\"Incorrect email or password.\");\r",
+                  "    });"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"userEmail\": \"{{invalidEmail}}\",\r\n    \"userPassword\": \"{{invalidPwd}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{Base_Url}}/api/ecom/auth/login",
+              "host": [
+                "{{Base_Url}}"
+              ],
+              "path": [
+                "api",
+                "ecom",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Product Without Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();\r",
+                  "pm.test(\"Create Product without token\", function () {\r",
+                  "    pm.response.to.have.status(401);\r",
+                  "    pm.expect(response.message).to.eql(\"Access denied. No token provided.\");\r",
+                  "    });"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "productName",
+                  "value": "{{productName}}",
+                  "type": "text"
+                },
+                {
+                  "key": "productCategory",
+                  "value": "fashion",
+                  "type": "text"
+                },
+                {
+                  "key": "productSubCategory",
+                  "value": "{{productSubCategory}}",
+                  "type": "text"
+                },
+                {
+                  "key": "productPrice",
+                  "value": "{{productPrice}}",
+                  "type": "text"
+                },
+                {
+                  "key": "productDescription",
+                  "value": "Addias Originals",
+                  "type": "text"
+                },
+                {
+                  "key": "productFor",
+                  "value": "{{productFor}}",
+                  "type": "text"
+                },
+                {
+                  "key": "productAddedBy",
+                  "value": "{{userId}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{Base_Url}}/api/ecom/product/add-product",
+              "host": [
+                "{{Base_Url}}"
+              ],
+              "path": [
+                "api",
+                "ecom",
+                "product",
+                "add-product"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Order With Invalid ProductID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();\r",
+                  "pm.test(\"Create Order with invalid productID\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "    pm.expect(response.message).to.eql(\"Wrong Product ID\");\r",
+                  "    });"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"orders\": [\r\n        {\r\n            \"country\": \"India\",\r\n            \"productOrderedId\": \"{{invalidProductId}}\"\r\n            \r\n        }\r\n    ]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{Base_Url}}/api/ecom/order/create-order",
+              "host": [
+                "{{Base_Url}}"
+              ],
+              "path": [
+                "api",
+                "ecom",
+                "order",
+                "create-order"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Product Without Payload",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();\r",
+                  "pm.test(\"Create Product without Payload\",function(){\r",
+                  "    pm.response.to.have.status(500);\r",
+                  "    pm.expect(response.type).to.eql(\"Something Went Wrong\");\r",
+                  "    });"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{Base_Url}}/api/ecom/product/add-product",
+              "host": [
+                "{{Base_Url}}"
+              ],
+              "path": [
+                "api",
+                "ecom",
+                "product",
+                "add-product"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "View Deleted Product Details",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();\r",
+                  "pm.test(\"Check response status and the message when the order id is invalid\", function() \r",
+                  "{\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "    pm.expect(response.message).to.be.eql(\"Order not found\")\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{Base_Url}}/api/ecom/order/get-orders-details?id={{orderId}}",
+              "host": [
+                "{{Base_Url}}"
+              ],
+              "path": [
+                "api",
+                "ecom",
+                "order",
+                "get-orders-details"
+              ],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "{{orderId}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "orderId",
+      "value": ""
+    },
+    {
+      "key": "productName",
+      "value": "Adidas"
+    },
+    {
+      "key": "productSubCategory",
+      "value": "Tshirt"
+    },
+    {
+      "key": "productPrice",
+      "value": 180
+    },
+    {
+      "key": "productFor",
+      "value": "men"
+    },
+    {
+      "key": "productId",
+      "value": ""
+    },
+    {
+      "key": "invalidEmail",
+      "value": "QA@gmail.com"
+    },
+    {
+      "key": "invalidPwd",
+      "value": "Testing#123"
+    },
+    {
+      "key": "invalidProductId",
+      "value": "6a154fae17ee3e78ba9c9bf4"
+    }
+  ]
+}
